@@ -1,50 +1,97 @@
-body {
-    font-family: sans-serif;
-    margin: 20px;
-    background-color: rgb(240, 236, 236);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'roboto', sans-serif;
+  outline: none;
+}
+
+body{
+  background: url(./img/background.png);
+}
+
+h1 {
+  text-align: center;
+  margin-top: 15px;
+  color: #0c0c06;
   }
-  
-  .input-area {
-    display: flex;
-    justify-items: center;
-   
+
+.conteiner{
+  background-color: #d1d1d1;
+  width: 500px;
+  border-radius: 10px;
+  padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  margin: 100px auto 0;
+}
+
+.input-task{
+  border: none;
+  border-radius: 5px;
+  width: 300px;
+  height: 40px;
+  padding-left: 10px;
+}
+
+.button-add-task{
+border: none;
+border-radius: 5px;
+height: 40px;
+background-color: #003329;
+color: #ffff;
+font-size: 17px;
+padding: 0 15px;
+float: right;
+cursor: pointer;
+font-weight: 700;
+}
+
+.button-add-task:hover{
+opacity: 0.8;
+
+}
+
+
+.button-add-task:active{
+opacity: 0.6;
+}
+
+
+.list-tasks{
+  width: 100%;
+  list-style: none;
+  margin-top: 30px;
+
+}
+
+.task{
+  background-color: #f2f2f2;
+  box-shadow: 1px 4px 10px rgba(0, 0, 0, 0.2);
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  cursor: pointer;
+ 
+}
+
+  img{
+    height: 25px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
   }
-  
-  #taskInput {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-  }
-  
-  #addTaskButton {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  #taskList {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-  }
-  
-  #taskList li {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    align-items: center;
-  }
-  
-  #taskList li span {
-    flex-grow: 1;
-  }
-  
-  #taskList li button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
+
+.task:hover img{
+  opacity: 1;
+ 
+}
+
+.done{
+  background-color: #8fac55;
+  text-decoration: line-through;
+}

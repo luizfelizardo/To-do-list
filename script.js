@@ -1,38 +1,78 @@
-const taskInput = document.getElementById("taskInput");
-const addTaskButton = document.getElementById("addTaskButton");
-const taskList = document.getElementById("taskList");
-const tasks = new Set(); // Conjunto para armazenar as tarefas
+const button = document.querySelector('.button-add-task')
+const input = document.querySelector('.input-task')
+const listaCompleta = document.querySelector('.list-tasks')
 
-addTaskButton.addEventListener("click", addTask);
+let minhaListaDeItens = []
 
-function addTask() {
-  const taskText = taskInput.value.trim();
+function adicionarNovaTarefa() {
+  const tarefa = input.value.trim(); // Remove espaços em branco extras
 
-  if (taskText === "") {
-    alert("Por favor, digite uma tarefa!");
-    return;
+  if (tarefa === "") {
+    alert("Por favor, digite uma tarefa.");
+    return; // Impede que a tarefa vazia seja adicionada
   }
 
-  // Verifica se a tarefa já está no conjunto
-  if (tasks.has(taskText)) {
-    alert("Essa tarefa já está na lista!");
-    return;
+  // Verifica se a tarefa já existe na lista
+  if (minhaListaDeItens.find(item => item.tarefa === tarefa)) {
+    alert("Tarefa já existe na lista.");
+    return; // Impede que a tarefa repetida seja adicionada
   }
 
-  const li = document.createElement("li");
-  li.innerHTML = `<span>${taskText}</span><button>Remover</button>`;
-  taskList.appendChild(li);
-  taskInput.value = "";
+  minhaListaDeItens.push({
+    tarefa: input.value,
+    concluida: false,
+  })
 
-  const removeButton = li.querySelector("button");
-  removeButton.addEventListener("click", removeTask);
+  input.value = ''
 
-  tasks.add(taskText); // Adiciona a tarefa ao conjunto
+  mostrarTarefas()
 }
 
-function removeTask(event) {
-  const li = event.target.parentNode;
-  const taskText = li.querySelector("span").textContent;
-  taskList.removeChild(li);
-  tasks.delete(taskText); // Remove a tarefa do conjunto
+function mostrarTarefas() {
+  let novaLi = ''
+
+  // ['comprar café', 'estudar programação']
+
+  minhaListaDeItens.forEach((item, posicao) => {
+    novaLi =
+      novaLi +
+      `
+
+        <li class="task ${item.concluida && 'done'}">
+            <img src="./img/checked.png" alt="check-na-tarefa" onclick="concluirTarefa(${posicao})">
+            <p>${item.tarefa}</p>
+            <img src="./img/trash.png" alt="tarefa-para-o-lixo" onclick="deletarItem(${posicao})">
+        </li>
+        
+        `
+  })
+
+  listaCompleta.innerHTML = novaLi
+
+  localStorage.setItem('lista', JSON.stringify(minhaListaDeItens))
 }
+
+function concluirTarefa(posicao) {
+  minhaListaDeItens[posicao].concluida = !minhaListaDeItens[posicao].concluida
+
+  mostrarTarefas()
+}
+
+function deletarItem(posicao) {
+  minhaListaDeItens.splice(posicao, 1)
+
+  mostrarTarefas()
+}
+
+function recarregarTarefas() {
+  const tarefasDoLocalStorage = localStorage.getItem('lista')
+
+  if (tarefasDoLocalStorage) {
+    minhaListaDeItens = JSON.parse(tarefasDoLocalStorage)
+  }
+
+  mostrarTarefas()
+}
+
+recarregarTarefas()
+button.addEventListener('click', adicionarNovaTarefa)

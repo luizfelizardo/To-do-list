@@ -1,78 +1,131 @@
-const button = document.querySelector('.button-add-task')
-const input = document.querySelector('.input-task')
-const listaCompleta = document.querySelector('.list-tasks')
+const button = document.querySelector('.button-add-task');
+const input = document.querySelector('.input-task');
+const listaCompleta = document.querySelector('.list-tasks');
 
-let minhaListaDeItens = []
+let minhaListaDeItens = [];
 
-function adicionarNovaTarefa() {
-  const tarefa = input.value.trim(); // Remove espaços em branco extras
+async function adicionarNovaTarefa() {
+    const tarefa = input.value.trim();
+    const dataCriacao = document.getElementById('dataCriacao').value;
+    const dataVencimento = document.getElementById('dataVencimento').value;
 
-  if (tarefa === "") {
-    alert("Por favor, digite uma tarefa.");
-    return; // Impede que a tarefa vazia seja adicionada
-  }
+    if (!tarefa || !dataCriacao) {
+        alert("Por favor, digite uma tarefa e a data de criação.");
+        return;
+    }
 
-  // Verifica se a tarefa já existe na lista
-  if (minhaListaDeItens.find(item => item.tarefa === tarefa)) {
-    alert("Tarefa já existe na lista.");
-    return; // Impede que a tarefa repetida seja adicionada
-  }
+    const data = { tarefa: tarefa, data_criacao: dataCriacao, data_vencimento: dataVencimento };
+    console.log("JSON enviado:", JSON.stringify(data));
+    try {
+        button.disabled = true;
+        input.disabled = true;
+        const response = await fetch('/tarefas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
 
-  minhaListaDeItens.push({
-    tarefa: input.value,
-    concluida: false,
-  })
-
-  input.value = ''
-
-  mostrarTarefas()
+        if (response.ok) {
+            input.value = '';
+            recarregarTarefas();
+        } else {
+            console.error("Erro ao adicionar tarefa:", response.status, response.statusText);
+            alert("Ocorreu um erro ao adicionar a tarefa. Por favor, tente novamente.");
+        }
+    } catch (error) {
+        console.error("Erro ao adicionar tarefa:", error);
+        alert("Ocorreu um erro ao adicionar a tarefa. Por favor, tente novamente.");
+    } finally {
+        button.disabled = false;
+        input.disabled = false;
+    }
 }
 
-function mostrarTarefas() {
-  let novaLi = ''
+async function mostrarTarefas() {
+    if (minhaListaDeItens.length === 0) {
+        listaCompleta.innerHTML = '<p>Nenhuma tarefa encontrada.</p>';
+        return;
+    }
 
-  // ['comprar café', 'estudar programação']
-
-  minhaListaDeItens.forEach((item, posicao) => {
-    novaLi =
-      novaLi +
-      `
-
-        <li class="task ${item.concluida && 'done'}">
-            <img src="./img/checked.png" alt="check-na-tarefa" onclick="concluirTarefa(${posicao})">
-            <p>${item.tarefa}</p>
-            <img src="./img/trash.png" alt="tarefa-para-o-lixo" onclick="deletarItem(${posicao})">
-        </li>
-        
-        `
-  })
-
-  listaCompleta.innerHTML = novaLi
-
-  localStorage.setItem('lista', JSON.stringify(minhaListaDeItens))
+    let listaHTML = '';
+    minhaListaDeItens.forEach(item => {
+        listaHTML += `
+            <li class="task ${item.concluida ? 'done' : ''}">
+                <img src="./img/checked.png" alt="check-na-tarefa" onclick="concluirTarefa(${item.id})">
+                <p>${item.tarefa}</p>
+                <p>Criação: ${item.data_criacao}</p>
+                <p>Vencimento: ${item.data_vencimento || 'N/A'}</p>
+                <img src="./img/trash.png" alt="tarefa-para-o-lixo" onclick="deletarItem(${item.id})">
+            </li>
+        `;
+    });
+    listaCompleta.innerHTML = listaHTML;
 }
 
-function concluirTarefa(posicao) {
-  minhaListaDeItens[posicao].concluida = !minhaListaDeItens[posicao].concluida
+async function concluirTarefa(id) {
+    try {
+        const response = await fetch(`/tarefas/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ concluida: minhaListaDeItens.find(item => item.id === id).concluida })
+        });
 
-  mostrarTarefas()
+        if (response.ok) {
+            recarregarTarefas();
+        } else {
+            console.error("Erro ao concluir tarefa:", response.status, response.statusText);
+            alert("Ocorreu um erro ao concluir a tarefa. Por favor, tente novamente.");
+        }
+    } catch (error) {
+        console.error("Erro ao concluir tarefa:", error);
+        alert("Ocorreu um erro ao concluir a tarefa. Por favor, tente novamente.");
+    }
 }
 
-function deletarItem(posicao) {
-  minhaListaDeItens.splice(posicao, 1)
+async function deletarItem(id) {
+    if (confirm("Deseja realmente excluir esta tarefa?")) {
+        try {
+            const response = await fetch(`/tarefas/${id}`, {
+                method: 'DELETE'
+            });
 
-  mostrarTarefas()
+            if (response.ok) {
+                recarregarTarefas();
+            } else {
+                console.error("Erro ao deletar tarefa:", response.status, response.statusText);
+                alert("Ocorreu um erro ao deletar a tarefa. Por favor, tente novamente.");
+            }
+        } catch (error) {
+            console.error("Erro ao deletar tarefa:", error);
+            alert("Ocorreu um erro ao deletar a tarefa. Por favor, tente novamente.");
+        }
+    }
 }
 
-function recarregarTarefas() {
-  const tarefasDoLocalStorage = localStorage.getItem('lista')
-
-  if (tarefasDoLocalStorage) {
-    minhaListaDeItens = JSON.parse(tarefasDoLocalStorage)
-  }
-
-  mostrarTarefas()
+async function recarregarTarefas() {
+    try {
+        const response = await fetch('/tarefas');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const tarefas = await response.json();
+        minhaListaDeItens = tarefas.map(tarefa => ({
+            id: tarefa.id,
+            tarefa: tarefa.tarefa,
+            concluida: tarefa.concluida,
+            data_criacao: tarefa.data_criacao,
+            data_vencimento: tarefa.data_vencimento
+        }));
+        mostrarTarefas();
+    } catch (error) {
+        console.error("Erro ao recarregar tarefas:", error);
+        listaCompleta.innerHTML = '<p>Não foi possível carregar as tarefas. Por favor, tente novamente mais tarde.</p>';
+    }
 }
 
-recarregarTarefas()
-button.addEventListener('click', adicionarNovaTarefa)
+recarregarTarefas();
+button.addEventListener('click', adicionarNovaTarefa);

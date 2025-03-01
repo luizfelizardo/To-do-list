@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Gerenciador de Tarefas</title>
+</head>
+<body>
+    <h1>Gerenciador de Tarefas</h1>
+    <div class="conteiner">
+        <form method="POST">
+            <div class="input-group">
+                <label for="descricao"></label>
+                <input type="text" name="descricao" id="descricao" class="input-field input-descricao" placeholder="Descrição">
+            </div>
+            <div class="input-group">
+                <label for="data_criacao"></label>
+                <input type="date" name="data_criacao" id="data_criacao" class="input-field input-data" placeholder="Data de Criação">
+            </div>
+            <div class="input-group">
+                <label for="data_vencimento"></label>
+                <input type="date" name="data_vencimento" id="data_vencimento" class="input-field input-data" placeholder="Data de Vencimento">
+            </div>
+            <div class="button-container">
+                <button type="submit" class="button-add-task">Adicionar</button>
+            </div>
+        </form>
+        <ul class="list-tasks">
+            {% for tarefa in tarefas %}
+            <li class="task {% if tarefa[2] == 'concluida' %}done{% endif %}">
+                <p>{{ tarefa[1] }} - {{ tarefa[3] }}</p>
+                <a href="/deletar/{{ tarefa[0] }}" title="Deletar tarefa"><img src="{{ url_for('static', filename='img/trash.png') }}" alt="Deletar"></a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html> 

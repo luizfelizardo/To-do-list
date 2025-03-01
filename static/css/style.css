@@ -1,0 +1,126 @@
+/* Reset e Configurações Globais */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'roboto', sans-serif;
+  outline: none;
+}
+
+body {
+  background: url(./img/background.png);
+  font-family: Arial, sans-serif; /* Mantenha uma fonte de fallback */
+  padding: 20px; /* Mantenha um padding mínimo */
+}
+
+h1 {
+  text-align: center;
+  margin-top: 15px;
+  color: #0c0c06;
+}
+
+.conteiner {
+  background-color: #d1d1d1;
+  width: 500px;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 50px auto 0; /* Diminua a margem superior para subir o contêiner */
+}
+
+.input-task {
+  border: none;
+  border-radius: 5px;
+  width: 300px;
+  height: 40px;
+  padding-left: 10px;
+}
+
+.button-add-task {
+  border: none;
+  border-radius: 5px;
+  height: 40px;
+  background-color: #003329;
+  color: #ffff;
+  font-size: 17px;
+  padding: 0 15px;
+  /* float: right; Remova esta linha */
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.button-container {
+  text-align: center; /* Centraliza o conteúdo horizontalmente */
+  margin-top: 10px; /* Adiciona uma margem superior para separar dos inputs */
+}
+
+.button-add-task:hover {
+  opacity: 0.8;
+}
+
+.button-add-task:active {
+  opacity: 0.6;
+}
+
+.list-tasks {
+  width: 100%;
+  list-style: none;
+  margin-top: 30px;
+}
+
+.task {
+  background-color: #f2f2f2;
+  box-shadow: 1px 4px 10px rgba(0, 0, 0, 0.2);
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.task img {
+  height: 25px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.task:hover img {
+  opacity: 1;
+}
+
+.done {
+  background-color: #8fac55;
+  text-decoration: line-through;
+}
+
+.input-group {
+  margin-bottom: 10px;
+}
+
+.input-field {
+  border: none;
+  border-radius: 5px;
+  height: 40px;
+  padding-left: 10px;
+  width: 100%;
+  background-color: #f2f2f2; /* Cor de fundo comum para todos os inputs */
+  color: #333; /* Cor do texto comum para todos os inputs */
+}
+
+.input-field::placeholder {
+  color: #999; /* Cor do placeholder */
+}
+
+.input-field:focus {
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra ao focar */
+}
+
+.input-descricao {
+  color: black; /* Cor do placeholder *//* Estilos específicos para o campo de descrição (se necessário) */
+}
+
+.input-data {
+  color: black; /* Cor do placeholder *//* Estilos específicos para os campos de data (se necessário) */
+}
